@@ -1,28 +1,37 @@
 import React, { Component } from 'react';
-import { AppRegistry, ListView, Text, View } from 'react-native';
+import { AppRegistry, Navigator, Text, View } from 'react-native';
 
-class ListViewBasics extends Component {
-  // Initialize the hardcoded data
-  constructor(props) {
-    super(props);
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    this.state = {
-      dataSource: ds.cloneWithRows([
-        'John', 'Joel', 'James', 'Jimmy', 'Jackson', 'Jillian', 'Julie', 'Devin'
-      ])
-    };
-  }
+import MyScene from './MyScene';
+
+class SimpleNavigationApp extends Component {
   render() {
     return (
-      <View style={{paddingTop: 22}}>
-        <ListView
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Text>{rowData}</Text>}
-        />
-      </View>
-    );
+      <Navigator
+        initialRoute={{ title: 'My Initial Scene', index: 0 }}
+        renderScene={(route, navigator) =>
+          <MyScene
+            title={route.title}
+
+            // Function to call when a new scene should be displayed           
+            onForward={ () => {    
+              const nextIndex = route.index + 1;
+              navigator.push({
+                title: 'Scene ' + nextIndex,
+                index: nextIndex,
+              });
+            }}
+
+            // Function to call to go back to the previous scene
+            onBack={() => {
+              if (route.index > 0) {
+                navigator.pop();
+              }
+            }}
+          />
+        }
+      />
+    )
   }
 }
 
-// App registration and rendering
-AppRegistry.registerComponent('firstReactNativeApp', () => ListViewBasics);
+AppRegistry.registerComponent('firstReactNativeApp', () => SimpleNavigationApp);
